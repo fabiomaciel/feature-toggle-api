@@ -10,15 +10,18 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TestController {
 
-    private final RedisCommands<String, String> redisCommands;
+    private final FeatureToggleProvider featureToggleProvider;
 
     @GetMapping
-    public String test(@RequestParam String key) {
-        return redisCommands.get(key);
+    public String test() {
+        if(featureToggleProvider.isEnabled(FeatureToggleKeys.MESSAGE)) {
+            return "Feature is enabled";
+        }
+        return "Feature is disabled";
     }
 
     @PostConstruct
     public void init() {
-        redisCommands.set("x", "value");
+        System.out.println("FeatureToggleProvider is enabled");
     }
 }
